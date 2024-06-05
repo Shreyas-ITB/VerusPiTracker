@@ -109,7 +109,7 @@ def main():
             print("")
         print("")
         print(SYSTEM, Fore.GREEN + datetime.datetime.now().strftime("%I:%M %p"))
-        print(SYSTEM, Fore.CYAN + "VerusCoin Price:", Fore.GREEN + f"{price} {currency_codes.get_symbol(CURRENCY)}")
+        print(SYSTEM, Fore.CYAN + "VerusCoin Price:", Fore.GREEN + f"{price} {str(CURRENCY).upper()}")
         print(SYSTEM, Fore.CYAN + "24 Hour Price Change:", Fore.GREEN + f"{round(pricechanges, 2)}%")
         print(SYSTEM, "Overall Pool Results:")
         print(POOL_API, Fore.BLUE + "Overall Hashrate:",Fore.GREEN + overall_hashrate)
