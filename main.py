@@ -198,7 +198,7 @@ def main():
             rpi_data = collect_rpi_data()
             print(RPI, "Raspberry Pi SBC Data Logger:")
             for device in rpi_data:
-                temp_color = Fore.RED if float(device['temp']) > 60 else Fore.GREEN
+                temp_color = Fore.YELLOW if float(device['temp']) > 60 else Fore.GREEN
                 netcons_hr = bytes_to_human_readable(int(device['netcons']))
                 if onTABLET == "False" or onTABLET == "false":
                     ip_address = get_ip(str(device['name']))
@@ -215,7 +215,7 @@ def main():
                     else:
                         print(SYSTEM, Fore.RED + "Unable to get IP address for", device['name'])
                 elif onTABLET == "True" or onTABLET == "true":
-                    print(RPI, Fore.WHITE + f"{device['name']}", Fore.WHITE + "is running at a temperature of:", temp_color + f"{device['temp']} C", Fore.WHITE + "Net Speed:", Fore.BLUE + f"{netcons_hr}")
+                    print(RPI, Fore.WHITE + f"{device['name']}", Fore.WHITE + "is running at a", Fore.BLUE + "temperature" + Fore.WHITE + " of:", temp_color + f"{device['temp']} C", Fore.WHITE + "Net Speed:", Fore.BLUE + f"{netcons_hr}")
                 else:
                     print(SYSTEM, Fore.RED + "Invalid onTABLET value. Please set it to True or False.")
             print(SYSTEM, "Sleeping for 5 mins...")
