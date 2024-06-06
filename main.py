@@ -17,6 +17,7 @@ load_dotenv(find_dotenv())
 CURRENCY = os.environ.get("CURRENCY")
 Address = os.environ.get("ADDRESS")
 poolapi = os.environ.get("POOLAPI")
+onTABLET = os.environ.get("onTABLET")
 init(autoreset=True)
 
 class RequestHandler(BaseHTTPRequestHandler):
@@ -199,25 +200,29 @@ def main():
             for device in rpi_data:
                 temp_color = Fore.RED if float(device['temp']) > 60 else Fore.GREEN
                 netcons_hr = bytes_to_human_readable(int(device['netcons']))
-                ip_address = get_ip(str(device['name']))
-                if ip_address:
-                    online_status = check_online(ip_address)
-                    if online_status:
-                        avg_rtt_ms = ping_device(ip_address)
-                        if avg_rtt_ms is not None:
-                            print(RPI, Fore.WHITE + f"{device['name']}", Fore.WHITE + "is running at a temperature of:", temp_color + f"{device['temp']} C", Fore.WHITE + "Net Speed:", Fore.BLUE + f"{netcons_hr}", Fore.WHITE + "Online:", Fore.GREEN + "True", Fore.WHITE + "Avg RTT:", Fore.BLUE + f"{avg_rtt_ms:.2f} ms")
+                if onTABLET == "False" or onTABLET == "false":
+                    ip_address = get_ip(str(device['name']))
+                    if ip_address:
+                        online_status = check_online(ip_address)
+                        if online_status:
+                            avg_rtt_ms = ping_device(ip_address)
+                            if avg_rtt_ms is not None:
+                                print(RPI, Fore.WHITE + f"{device['name']}", Fore.WHITE + "is running at a temperature of:", temp_color + f"{device['temp']} C", Fore.WHITE + "Net Speed:", Fore.BLUE + f"{netcons_hr}", Fore.WHITE + "Online:", Fore.GREEN + "True", Fore.WHITE + "Avg RTT:", Fore.BLUE + f"{avg_rtt_ms:.2f} ms")
+                            else:
+                                print(RPI, Fore.WHITE + f"{device['name']}", Fore.WHITE + "last updated temperature is:", temp_color + f"{device['temp']} C", Fore.WHITE + "last updated Net Speed:", Fore.BLUE + f"{netcons_hr}", Fore.WHITE + "Online:", Fore.RED + "False")
                         else:
                             print(RPI, Fore.WHITE + f"{device['name']}", Fore.WHITE + "last updated temperature is:", temp_color + f"{device['temp']} C", Fore.WHITE + "last updated Net Speed:", Fore.BLUE + f"{netcons_hr}", Fore.WHITE + "Online:", Fore.RED + "False")
                     else:
-                        print(RPI, Fore.WHITE + f"{device['name']}", Fore.WHITE + "last updated temperature is:", temp_color + f"{device['temp']} C", Fore.WHITE + "last updated Net Speed:", Fore.BLUE + f"{netcons_hr}", Fore.WHITE + "Online:", Fore.RED + "False")
+                        print(SYSTEM, Fore.RED + "Unable to get IP address for", device['name'])
+                elif onTABLET == "True" or onTABLET == "true":
+                    print(RPI, Fore.WHITE + f"{device['name']}", Fore.WHITE + "is running at a temperature of:", temp_color + f"{device['temp']} C", Fore.WHITE + "Net Speed:", Fore.BLUE + f"{netcons_hr}")
                 else:
-                    print(SYSTEM, Fore.RED + "Unable to get IP address for", device['name'])
-
+                    print(SYSTEM, Fore.RED + "Invalid onTABLET value. Please set it to True or False.")
             print(SYSTEM, "Sleeping for 5 mins...")
             sleep(300)
         except Exception as e:
-            print(Fore.RED + "An error occurred: ", str(e))
-            sleep(300)
+            print(Fore.RED + "An error occurred: ", str(e), Fore.GREEN + "Retrying in 30 seconds...")
+            sleep(30)
 
 if __name__ == "__main__":
     main()
